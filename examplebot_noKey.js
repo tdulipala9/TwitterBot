@@ -150,7 +150,7 @@ function runBot() {
 			"Seriously I have had enough of Intro to " + capitalize(nouns.pick().word) + ".",
 			"Who's coming to Club " + capitalize(singularize(nouns.pick().word)) + " tonight? I'm DJing along with my bro " + capitalize(nouns.pick().word) + ".",
 			"Missed class again. Too many " + pluralize(nouns.pick().word) + " last night."
-			// etc.			
+			// etc.
 		];
 		
 		///----- NOW DO THE BOT STUFF
