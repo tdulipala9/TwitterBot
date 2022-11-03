@@ -14,7 +14,39 @@ var inflection = require('inflection');
 var pluralize = inflection.pluralize;
 var capitalize = inflection.capitalize;
 var singularize = inflection.singularize;
-var pre;				//cat puns
+var pre = [
+	"Paw-don me, but are you fur real?!",
+	"Looking good, feline good.", 
+	"You're the cat's pawjamas",
+	"Live long and pawsper.",
+	"Meow you doin'?",
+	"I've got felines for you.",
+	"Best furiends furever.",
+	"Wait a meow-nute.",
+	"He always does the bare mew-nimum.",
+	"I'm a total cat purrson.",
+	"You're purrfect just the way you are.",
+	"So fur, so good.",
+	"It ain't easy being this purr-fect.",
+	"When I'm with you I'm feline good.",
+	"Stay paw-sitive.",
+	"What do you call a pile of cats? \n A meowtain",
+	"Cat puns are so a-mew-sing.",
+	"Right meow, it's nap time.",
+	"Meow's it goin'?",
+	"What's a cat's favorite color? \n Purr-ple!",
+	"What is a cat's favorite kind of sports car? \n A furr-ari",
+	"What is a cat's favorite discount? \n Buy one get one furry.",
+	"Cats love to listen to meow-sic.",
+	"Living in a gangsta's purr-adise.",
+	"I'm craving a purr-ito.",
+	"Why do cats always win video games? \n Because they have nine lives.",
+	"Knock, knock. Who's there? \n Kitten. \n Kitten, who? \n Quit kitten around and open the door.",
+	"Don't want to work, just want to play with cats, I'm pro-cat-stinating.",
+	"You've got purr-sonality."
+];		//cat puns
+
+var count = pre.length;
 
 // Blacklist
 var wordfilter = require('wordfilter');
@@ -41,6 +73,10 @@ Array.prototype.remove = function() {
     return this;
 };
 
+function randPick() {
+	var rand = Math.floor(Math.random()*count);
+	return pre[rand];
+}
 
 // This is the URL of a search for the latest tweets on the '#mediaarts' hashtag.
 var mediaArtsSearch = {q: "#cats", count: 10, result_type: "recent"}; 
@@ -80,7 +116,7 @@ function nounUrl(minCorpusCount, limit) {
 // Post a status update
 function tweet() {
 
-	var tweetText = pre.pick();
+	var tweetText = randPick();
 
 	if(debug) 
 		console.log('Debug mode: ', tweetText);
@@ -167,38 +203,7 @@ function runBot() {
 			}				
 		}
 
-		pre = [
-			"Paw-don me, but are you fur real?!",
-			"Looking good, feline good.", 
-			"You're the cat's pawjamas",
-			"Live long and pawsper.",
-			"Meow you doin'?",
-			"I've got felines for you.",
-			"Best furiends furever.",
-			"Wait a meow-nute.",
-			"He always does the bare mew-nimum.",
-			"I'm a total cat purrson.",
-			"You're purrfect just the way you are.",
-			"So fur, so good.",
-			"It ain't easy being this purr-fect.",
-			"When I'm with you I'm feline good.",
-			"Stay paw-sitive.",
-			"What do you call a pile of cats? \n A meowtain",
-			"Cat puns are so a-mew-sing.",
-			"Right meow, it's nap time.",
-			"Meow's it goin'?",
-			"What's a cat's favorite color? \n Purr-ple!",
-			"What is a cat's favorite kind of sports car? \n A furr-ari",
-			"What is a cat's favorite discount? \n Buy one get one furry.",
-			"Cats love to listen to meow-sic.",
-			"Living in a gangsta's purr-adise.",
-			"I'm craving a purr-ito.",
-			"Why do cats always win video games? \n Because they have nine lives.",
-			"Knock, knock. Who's there? \n Kitten. \n Kitten, who? \n Quit kitten around and open the door.",
-			"Don't want to work, just want to play with cats, I'm pro-cat-stinating.",
-			"You've got purr-sonality."
-			// etc.			
-		];
+		
 		
 		///----- NOW DO THE BOT STUFF
 		var rand = Math.random();
@@ -226,6 +231,7 @@ setInterval(runBot, 1000 * 60 * 60);
 
 // Try to retweet something as soon as we run the program...
 retweetLatest();
+tweet();
 // ...and then every hour after that. Time here is in milliseconds, so
 // 1000 ms = 1 second, 1 sec * 60 = 1 min, 1 min * 60 = 1 hour --> 1000 * 60 * 60
 setInterval(retweetLatest, 1000 * 60 * 60);
