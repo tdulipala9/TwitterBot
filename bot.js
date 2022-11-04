@@ -15,7 +15,7 @@ var pluralize = inflection.pluralize;
 var capitalize = inflection.capitalize;
 var singularize = inflection.singularize;
 var pre = [
-	"Paw-don me, but are you fur real?!",
+	"Paw-don me, but are you fur real?!" + ,
 	"Looking good, feline good.", 
 	"You're the cat's pawjamas",
 	"Live long and pawsper.",
@@ -115,7 +115,7 @@ function nounUrl(minCorpusCount, limit) {
 
 // Post a status update
 function tweet() {
-
+	//cat pun
 	var tweetText = randPick();
 
 	if(debug) 
@@ -221,6 +221,32 @@ function runBot() {
 			followAMentioner();
 		}
 	});
+
+	//post gif preparations
+	{
+		"name": "bot1";
+	}
+	//Add gif with each tweet
+	var fs = require('fs');
+	var b64content = fs.readFileSync('./gifs/walk.gif', {encoding: 'base64'});
+
+	T.post('media/upload', {media_data: b64content}, function(err, data, response) {
+        var mediaIdStr = data.media_id_string
+        var altText = "cat walking."
+        var meta_params = {media_id: mediaIdStr, alt_text: {text: altText }}
+
+		T.post('media/metadata/create', meta_params, function(err, data, response) {
+            if (!err) {
+                if (outerTweet != undefined) {
+                    var params = {status: "You: " + outerTweet + "\n\nElon if he received $8 for every word you tweeted: \nI'm $" + tweetCost(outerTweet) + " richer!", media_ids: [mediaIdStr]}
+                }
+                
+                T.post('statuses/update', params, function(err, data, response) {
+                    console.log(data)
+                })
+            }
+		})
+	})
 }
 
 // Run the bot
