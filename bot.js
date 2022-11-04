@@ -290,23 +290,24 @@ function runBot() {
         randLike();
     }
 }
-	/*//post gif preparations
-	{
-		name: "bot1";
-	}
-	//Add gif with each tweet
-	var fs = require('fs');
-	var b64content = fs.readFileSync('./gifs/walk.gif', {encoding: 'base64'});
 
+    //Add gif with each tweet
+	var Twit = require('twit');
+	var config = require('./config')
+	var T = new Twit(config);
+	var fs = require('fs');
+	var b64content = fs.readFileSync('./gifs/walk.gif', {encoding: 'base64'})
+
+	//This posts media to Twitter
 	T.post('media/upload', {media_data: b64content}, function(err, data, response) {
         var mediaIdStr = data.media_id_string
-        var altText = "cat walking."
+        var altText = "Cat walking."
         var meta_params = {media_id: mediaIdStr, alt_text: {text: altText }}
 
 		T.post('media/metadata/create', meta_params, function(err, data, response) {
             if (!err) {
                 if (outerTweet != undefined) {
-                    var params = {status: "You: " + outerTweet + "\n\nElon if he received $8 for every word you tweeted: \nI'm $" + tweetCost(outerTweet) + " richer!", media_ids: [mediaIdStr]}
+                    var params = {status: 'cute cats #soCute #cats #kawaii', media_ids: [mediaIdStr]}
                 }
                 
                 T.post('statuses/update', params, function(err, data, response) {
@@ -315,7 +316,7 @@ function runBot() {
             }
 		})
 	})
-}*/
+
 
 // Run the bot
 runBot();
