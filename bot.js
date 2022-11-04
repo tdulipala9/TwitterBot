@@ -78,10 +78,16 @@ function randPick() {
 	return pre[rand];
 }
 
-// This is the URL of a search for the latest tweets on the '#mediaarts' hashtag.
+// This is the URL of a search for the latest tweets on the '#cats' hashtag.
 var catsSearch = {q: "#cats", count: 10, result_type: "recent"}; 
 
-// This function finds the latest tweet with the #mediaarts hashtag, and retweets it.
+
+
+// This is the URL of a search for a popular/likes tweets on the '#kittens' hashtag.
+var kittensSearch = {q: "#kittens", count: 10, result_type: "popular"}; 
+
+
+// This function finds the latest tweet with the #cats hashtag, and retweets it.
 function retweetLatest() {
 	T.get('search/tweets', catsSearch, function (error, data) {
 	  // log out any errors and responses
@@ -108,6 +114,54 @@ function retweetLatest() {
 	  }
 	});
 }
+// This function finds a popular tweet with the #kittens hashtag, and retweets it.
+function retweetPopular() {
+	T.get('search/tweets', kittensSearch, function (error, data) {
+	  // log out any errors and responses
+	  console.log(error, data);
+	  // If our search request to the server had no errors...
+	  if (!error) {
+	  	// ...then we grab the ID of the tweet we want to retweet...
+		var retweetId = data.statuses[0].id_str;
+		// ...and then we tell Twitter we want to retweet it!
+		T.post('statuses/retweet/' + retweetId, { }, function (error, response) {
+			if (response) {
+				console.log('Success! Check your bot, it should have retweeted something.')
+				like(retweetId)
+			}
+			// If there was an error with our Twitter call, we print it out here.
+			if (error) {
+				console.log('There was an error with Twitter:', error);
+			}
+		})
+	  }
+	  // However, if our original search request had an error, we want to print it out here.
+	  else {
+	  	console.log('There was an error with your hashtag search:', error);
+	  }
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Wordnik stuff
 function nounUrl(minCorpusCount, limit) {
@@ -280,66 +334,72 @@ function respondToMention() {
 }
 
 function runBot() {
-  
-    var d=new Date();
-    var ds = d.toLocaleDateString() + " " + d.toLocaleTimeString();
-    console.log("Run Bot at: ", ds);  // date/time of the request   
+	console.log(" "); // just for legible logs
+	var d=new Date();
+	var ds = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+	console.log(ds);  // date/time of the request	
 
+	// Get 200 nouns with minimum corpus count of 5,000 (lower numbers = more common words) 
+	request(nounUrl(5000,200), function(err, response, data) {
+		if (err != null) return;		// bail if no data
+		nouns = eval(data);
 
+		// Filter out the bad nouns via the wordfilter
+		
+		for (var i = 0; i < nouns.length; i++) {
+			if (wordfilter.blacklisted(nouns[i].word))
+			{
+				console.log("Blacklisted: " + nouns[i].word);
+				nouns.remove(nouns[i]);
+				i--;
+			}				
+		}
 
-    ///----- NOW DO THE BOT STUFF
-    //1. post a status and like it
-    //2. find one i am interested in, retweet it, and like it
-    //3. if someone mention me, reply the message and follow the user
-    //4. pick one message randomly to like
-    var rand = Math.random();
+		
+		
+		///----- NOW DO THE BOT STUFF
+		var rand = Math.random();
 
-    console.log('rand value: ', rand);
-    if(rand <= 0.30) {      
-        console.log("-------Tweet something");
-        tweet();
-        
-    } else if (rand <= 0.60) {
-        console.log("-------find mentions and reply to @someone");
-        //respondToMention();
-        replyMentions();
-        
-    } else if(rand <= 0.8) {
-        console.log("-------find the latest interested message, retweet it and like it");
-        retweetLatest();
-    }
-    else {
-        console.log("-------find the latest random message to like");
-        randLike();
-    }
-
-
-	//post gif preparations
+ 		if(rand <= 1.60) {      
+			console.log("-------Tweet something");
+			tweet();
+			
+		} else if (rand <= 0.80) {
+			console.log("-------Tweet something @someone");
+			respondToMention();
+			
+		} else {
+			console.log("-------Follow someone who @-mentioned us");
+			followAMentioner();
+		}
+	});
+}
+	/*//post gif preparations
 	{
 		name: "bot1";
 	}
 	//Add gif with each tweet
-	// var fs = require('fs');
-	// var b64content = fs.readFileSync('./gifs/walk.gif', {encoding: 'base64'});
+	var fs = require('fs');
+	var b64content = fs.readFileSync('./gifs/walk.gif', {encoding: 'base64'});
 
-	// T.post('media/upload', {media_data: b64content}, function(err, data, response) {
-    //     var mediaIdStr = data.media_id_string
-    //     var altText = "cat walking."
-    //     var meta_params = {media_id: mediaIdStr, alt_text: {text: altText }}
+	T.post('media/upload', {media_data: b64content}, function(err, data, response) {
+        var mediaIdStr = data.media_id_string
+        var altText = "cat walking."
+        var meta_params = {media_id: mediaIdStr, alt_text: {text: altText }}
 
-	// 	T.post('media/metadata/create', meta_params, function(err, data, response) {
-    //         if (!err) {
-    //             if (outerTweet != undefined) {
-    //                 var params = {status: "You: " + outerTweet + "\n\nElon if he received $8 for every word you tweeted: \nI'm $" + tweetCost(outerTweet) + " richer!", media_ids: [mediaIdStr]}
-    //             }
+		T.post('media/metadata/create', meta_params, function(err, data, response) {
+            if (!err) {
+                if (outerTweet != undefined) {
+                    var params = {status: "You: " + outerTweet + "\n\nElon if he received $8 for every word you tweeted: \nI'm $" + tweetCost(outerTweet) + " richer!", media_ids: [mediaIdStr]}
+                }
                 
-    //             T.post('statuses/update', params, function(err, data, response) {
-    //                 console.log(data)
-    //             })
-    //         }
-	// 	})
-	// })
-}
+                T.post('statuses/update', params, function(err, data, response) {
+                    console.log(data)
+                })
+            }
+		})
+	})
+}*/
 
 // Run the bot
 runBot();
@@ -349,8 +409,8 @@ setInterval(runBot, 1000 * 60 * 60);
 
 // Try to retweet something as soon as we run the program...
 retweetLatest();
+retweetPopular();
 tweet();
 // ...and then every hour after that. Time here is in milliseconds, so
 // 1000 ms = 1 second, 1 sec * 60 = 1 min, 1 min * 60 = 1 hour --> 1000 * 60 * 60
 setInterval(retweetLatest, 1000 * 60 * 60);
-
