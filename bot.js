@@ -11,9 +11,6 @@ var debug = false;
 var WordnikAPIKey = 'YOUR WORDNIK API KEY HERE';
 var request = require('request');
 var inflection = require('inflection');
-var pluralize = inflection.pluralize;
-var capitalize = inflection.capitalize;
-var singularize = inflection.singularize;
 var pre = [
 	"Paw-don me, but are you fur real?!",
 	"Looking good, feline good.", 
@@ -142,11 +139,6 @@ function retweetPopular() {
 	});
 }
 
-
-// Wordnik stuff
-function nounUrl(minCorpusCount, limit) {
-	return "http://api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=false&includePartOfSpeech=noun&minCorpusCount=" + minCorpusCount + "&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=5&maxLength=-1&limit=" + limit + "&api_key=" + WordnikAPIKey;
-}
 
 // Like the tweet
 function like(tweetId) {
