@@ -296,7 +296,7 @@ var Twit = require('twit');
 var config = require('./config')
 var T = new Twit(config);
 var fs = require('fs');
-var b64content = fs.readFileSync('./gifs/cat1.jpeg', {encoding: 'base64'})
+var b64content = fs.readFileSync('./images/cat1.jpeg', {encoding: 'base64'})
 
 //This posts media to Twitter
 T.post('media/upload', {media_data: b64content}, function(err, data, response) {
