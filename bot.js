@@ -15,7 +15,7 @@ var pluralize = inflection.pluralize;
 var capitalize = inflection.capitalize;
 var singularize = inflection.singularize;
 var pre = [
-	"Paw-don me, but are you fur real?!" + ,
+	"Paw-don me, but are you fur real?!",
 	"Looking good, feline good.", 
 	"You're the cat's pawjamas",
 	"Live long and pawsper.",
@@ -126,6 +126,49 @@ function like(tweetId) {
     });
 }
 
+//find one message randomly to like
+function randLike() {
+    T.get('search/tweets', {q: "#cat", count:10, result_type: "recent", lang: "en"}, function (error, data) {
+
+        // If our search request to the server had no errors...
+        if (!error && data!= null && data.statuses.length > 0) {
+          // ...then we grab the ID of the tweet we want to like
+            if(Math.random() > 0.5)
+                like(data.statuses[0].id_str);
+           
+        }
+        // However, if our original search request had an error, we want to print it out here.
+        else {
+          console.log('There was an error with your hashtag search:', error);
+        }
+      }); 
+      
+}
+
+//follow the {uId} user
+function follow(uId) {
+    T.post('friendships/create', {id: uId}, function(err, response) {
+        if (err != null){
+            console.log('Follow user ' + uId + ' failed: ', err);
+        }
+        else {
+            console.log('Followed: ', uId);
+        }
+    });
+}
+
+//unfollow the {uId} friend
+function unfollow(uId) {
+    T.post('friendships/destroy', {id: uId}, function(err, response) {
+        if (err != null){
+            console.log('Unfollow user ' + uId + ' failed: ', err);
+        }
+        else {
+            console.log('Followed: ', uId);
+        }
+    });
+}
+
 // Post a status update
 function tweet() {
 	//cat pun
@@ -143,6 +186,47 @@ function tweet() {
 				like(data.id_str);
 			}
 		});
+}
+
+//reply to the tweet and follow the user
+function replyMentions() {
+    T.get('statuses/mentions_timeline', {count: 5}, function (err, reply) {
+        if (err != null) {
+          console.log('Get mentioned failed: ', err);
+        }
+        else {
+            if(reply != null && reply.length > 0) {
+                //console.log(reply);
+                var tweet = reply.pick();
+                var sn = tweet.user.screen_name;
+                var uId = tweet.user.id_str;
+                var tId = tweet.id;
+                console.log('User ' + sn + ' mentioned me in the post ' + tId + '.');
+
+                //reply to user
+                replyTo(sn, tId);
+
+                //follow the user
+                follow(uId);
+
+            }
+            else 
+                console.log("No one mentioned me!");
+          
+      }
+  });
+}
+
+function replyTo(sn, tId) {
+    var replyText = '@' + sn + ', it is glad to know it. thank you for your information.';
+    T.post('statuses/update', {status: replyText, in_reply_to_status_id: tId}, function (err, data, reply) {
+        if(err != null) {
+            console.log('Reply to ' + sn + ' post failed: ', err);
+        }
+        else {
+            console.log('Reply to ' + sn + ' successful!');
+        }
+    });
 }
 
 function followAMentioner() {
@@ -238,7 +322,7 @@ function runBot() {
 
 	//post gif preparations
 	{
-		"name": "bot1";
+		name: "bot1";
 	}
 	//Add gif with each tweet
 	var fs = require('fs');
