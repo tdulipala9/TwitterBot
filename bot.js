@@ -47,11 +47,11 @@ var pre = [
 
 //pre1 array with cat images.
 var pre1 = [
-    "images/cat1.jpeg",
-    "images/cough.jpeg",
-    "images/rabbitcat.jpeg",
-    "images/starbuks.jpeg",
-    "images/waht.jpeg"
+    "cat1.jpeg",
+    "cough.jpeg",
+    "rabbitcat.jpeg",
+    "starbuks.jpeg",
+    "waht.jpeg"
 ];
 
 
