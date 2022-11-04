@@ -79,11 +79,11 @@ function randPick() {
 }
 
 // This is the URL of a search for the latest tweets on the '#mediaarts' hashtag.
-var mediaArtsSearch = {q: "#cats", count: 10, result_type: "recent"}; 
+var catsSearch = {q: "#cats", count: 10, result_type: "recent"}; 
 
 // This function finds the latest tweet with the #mediaarts hashtag, and retweets it.
 function retweetLatest() {
-	T.get('search/tweets', mediaArtsSearch, function (error, data) {
+	T.get('search/tweets', catsSearch, function (error, data) {
 	  // log out any errors and responses
 	  console.log(error, data);
 	  // If our search request to the server had no errors...
@@ -94,6 +94,7 @@ function retweetLatest() {
 		T.post('statuses/retweet/' + retweetId, { }, function (error, response) {
 			if (response) {
 				console.log('Success! Check your bot, it should have retweeted something.')
+				like(retweetId)
 			}
 			// If there was an error with our Twitter call, we print it out here.
 			if (error) {
@@ -113,6 +114,18 @@ function nounUrl(minCorpusCount, limit) {
 	return "http://api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=false&includePartOfSpeech=noun&minCorpusCount=" + minCorpusCount + "&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=5&maxLength=-1&limit=" + limit + "&api_key=" + WordnikAPIKey;
 }
 
+// Like the tweet
+function like(tweetId) {
+    T.post('favorites/create', {id: tweetId}, function(err, response) {
+        if (err != null){
+            console.log('Error: ', err);
+        }
+        else {
+            console.log('Liked: ', tweetId);
+        }
+    });
+}
+
 // Post a status update
 function tweet() {
 	//cat pun
@@ -121,12 +134,13 @@ function tweet() {
 	if(debug) 
 		console.log('Debug mode: ', tweetText);
 	else
-		T.post('statuses/update', {status: tweetText }, function (err, reply) {
+		T.post('statuses/update', {status: tweetText }, function (err, data, reply) {
 			if (err != null){
 				console.log('Error: ', err);
 			}
 			else {
 				console.log('Tweeted: ', tweetText);
+				like(data.id_str);
 			}
 		});
 }
