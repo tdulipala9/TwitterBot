@@ -306,10 +306,8 @@ T.post('media/upload', {media_data: b64content}, function(err, data, response) {
 
 	T.post('media/metadata/create', meta_params, function(err, data, response) {
         if (!err) {
-            if (outerTweet != undefined) {
-                var params = {status: 'cute cats #soCute #cats #kawaii', media_ids: [mediaIdStr]}
-            }
-                
+            var params = {status: 'cute cats #soCute #cats #kawaii', media_ids: [mediaIdStr]}
+         
             T.post('statuses/update', params, function(err, data, response) {
                 console.log(data)
             })
