@@ -218,7 +218,7 @@ function replyMentions() {
 }
 
 function replyTo(sn, tId) {
-    var replyText = '@' + sn + ', it is glad to know it. thank you for your information.';
+    var replyText = '@' + sn + randPick();
     T.post('statuses/update', {status: replyText, in_reply_to_status_id: tId}, function (err, data, reply) {
         if(err != null) {
             console.log('Reply to ' + sn + ' post failed: ', err);
