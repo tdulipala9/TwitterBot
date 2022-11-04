@@ -11,6 +11,8 @@ var debug = false;
 var WordnikAPIKey = 'YOUR WORDNIK API KEY HERE';
 var request = require('request');
 var inflection = require('inflection');
+
+//pre array with cat puns
 var pre = [
 	"Paw-don me, but are you fur real?!",
 	"Looking good, feline good.", 
@@ -41,7 +43,17 @@ var pre = [
 	"Knock, knock. Who's there? \n Kitten. \n Kitten, who? \n Quit kitten around and open the door.",
 	"Don't want to work, just want to play with cats, I'm pro-cat-stinating.",
 	"You've got purr-sonality."
-];		//cat puns
+];
+
+//pre1 array with cat images.
+var pre1 = [
+    "images/cat1.jpeg",
+    "images/cough.jpeg",
+    "images/rabbitcat.jpeg",
+    "images/starbuks.jpeg",
+    "images/waht.jpeg"
+];
+
 
 var count = pre.length;
 
@@ -73,6 +85,11 @@ Array.prototype.remove = function() {
 function randPick() {
 	var rand = Math.floor(Math.random()*count);
 	return pre[rand];
+}
+
+function randPick1() {
+    var rand = Math.floor(Math.random()*pre1.length);
+	return pre1[rand];
 }
 
 // This is the URL of a search for the latest tweets on the '#cats' hashtag.
@@ -296,7 +313,7 @@ var Twit = require('twit');
 var config = require('./config')
 var T = new Twit(config);
 var fs = require('fs');
-var b64content = fs.readFileSync('./images/cat1.jpeg', {encoding: 'base64'})
+var b64content = fs.readFileSync('./images/' + randPick1(pre1), {encoding: 'base64'})
 
 //This posts media to Twitter
 T.post('media/upload', {media_data: b64content}, function(err, data, response) {
